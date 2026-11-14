@@ -1,90 +1,23 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Holanda Garçom Online</title>
-<style>
-:root{--bg:#0b1220;--panel:#121c2e;--line:#26364f;--text:#eaf1ff;--muted:#9fb0ca;--red:#ef4444;--blue:#3b82f6;--green:#16a34a;--gold:#f59e0b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,Arial;padding:16px}
-.wrap{max-width:900px;margin:auto}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
-h1,h2{margin:8px 0 14px}input,select,button{font:inherit;border-radius:9px;padding:11px;border:1px solid var(--line);background:#0b1424;color:var(--text);width:100%;margin:5px 0}
-button{background:#2457a6;border:0;font-weight:650;cursor:pointer}button.secondary{background:#334155}button.danger{background:#991b1b}
-.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.hidden{display:none!important}.muted{color:var(--muted);font-size:14px}
-.turn{font-size:24px;font-weight:800;color:#fbbf24}.counts{display:flex;gap:10px;flex-wrap:wrap}.pill{background:#0b1424;border:1px solid var(--line);padding:8px 12px;border-radius:99px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.mesa{border:2px solid var(--line);border-radius:12px;padding:12px;background:#0b1424}.mesa.aguardando{border-color:var(--red)}.mesa.andamento{border-color:var(--blue)}.mesa.finalizada{border-color:var(--green)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}.actions button{font-size:14px;padding:9px}.actions .wide{grid-column:1/-1}
-label{display:block;color:var(--muted);font-size:14px;margin-top:8px}
-</style>
-</head>
-<body><div class="wrap">
-<h1>🍕 Holanda Garçom Online</h1>
-<div id="login" class="panel">
-<h2>Entrar</h2><label>E-mail</label><input id="email" type="email" autocomplete="username">
-<label>Senha</label><input id="pass" type="password" autocomplete="current-password">
-<div class="row"><button onclick="login()">Entrar</button><button class="secondary" onclick="signup()">Criar conta</button></div><p id="authmsg" class="muted"></p>
-</div>
-<div id="app" class="hidden">
-<div class="panel"><div class="row"><div><b>Usuário:</b> <span id="userlabel"></span><p id="rolelabel" class="muted"></p></div><button class="secondary" onclick="logout()">Sair</button></div>
-<hr><div class="muted">Próximo garçom da sequência</div><div class="turn" id="turn">Defina a sequência</div>
-<div class="counts"><span class="pill">Abertas: <b id="openct">0</b></span><span class="pill">Finalizadas: <b id="donect">0</b></span><span class="pill">Taxas pagas: <b id="paidct">0</b></span></div></div>
-<div class="panel"><h2>Abrir atendimento</h2><label>Número da mesa</label><input id="tableno" placeholder="Ex.: 12">
-<button onclick="addTable()">Abrir mesa / atendimento</button><p class="muted">Cada abertura cria um atendimento independente, mesmo para o mesmo número de mesa.</p></div>
-<div id="adminpanel" class="panel hidden"><h2>Administração</h2>
-<label>Garçons (separe por vírgula, na ordem de rodízio)</label><input id="names" placeholder="Railson, Paula, Herick, Elói">
-<button onclick="saveSequence()">Salvar sequência</button>
-<label>Índice inicial (0 = primeiro nome)</label><input id="startindex" type="number" min="0" value="0">
-<label>Adicionar/autorizar usuário (UID do Firebase Authentication)</label><input id="memberuid" placeholder="UID exato do usuário">
-<label>E-mail do usuário</label><input id="memberemail" type="email" placeholder="garcom@email.com">
-<label>Perfil</label><select id="newrole"><option value="waiter">Garçom</option><option value="manager">Gerente</option><option value="admin">Administrador</option></select>
-<button onclick="addMember()">Autorizar usuário por UID</button>
-<p class="muted">Para autorizar alguém: Firebase Console → Authentication → Users → copie o UID e informe acima.</p>
-<button class="danger" onclick="closeNight()">Encerrar noite e limpar atendimentos</button>
-</div>
-<div class="panel"><h2>Atendimentos em aberto</h2><div id="openlist" class="cards"></div></div>
-<div class="panel"><h2>Atendimentos finalizados</h2><div id="donelist" class="cards"></div></div>
-</div></div>
-
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Holanda Garçom Online</title><style>
+:root{--bg:#0b1220;--p:#121c2e;--line:#26364f;--t:#eaf1ff;--m:#9fb0ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:16px system-ui;padding:16px}.wrap{max-width:900px;margin:auto}.panel{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}h1,h2{margin:8px 0 14px}input,select,button{font:inherit;border-radius:9px;padding:11px;border:1px solid var(--line);background:#0b1424;color:var(--t);width:100%;margin:5px 0}button{background:#2457a6;border:0;font-weight:650}button.secondary{background:#334155}button.danger{background:#991b1b}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.hidden{display:none!important}.muted{color:var(--m);font-size:14px}.turn{font-size:24px;font-weight:800;color:#fbbf24}.pill{background:#0b1424;border:1px solid var(--line);padding:8px 12px;border-radius:99px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.mesa{border:2px solid var(--line);border-radius:12px;padding:12px;background:#0b1424}.mesa.aguardando{border-color:#ef4444}.mesa.andamento{border-color:#3b82f6}.mesa.finalizada{border-color:#16a34a}.actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}.actions button{font-size:14px;padding:9px}.wide{grid-column:1/-1}label{display:block;color:var(--m);font-size:14px;margin-top:8px}</style></head><body><div class="wrap"><h1>🍕 Holanda Garçom Online</h1>
+<div id="login" class="panel"><h2>Entrar</h2><label>E-mail</label><input id="email" type="email"><label>Senha</label><input id="pass" type="password"><div class="row"><button onclick="login()">Entrar</button><button class="secondary" onclick="signup()">Criar conta</button></div><p id="authmsg" class="muted"></p></div>
+<div id="app" class="hidden"><div class="panel"><div class="row"><div><b>Usuário:</b> <span id="userlabel"></span><p id="rolelabel" class="muted"></p></div><button class="secondary" onclick="logout()">Sair</button></div><hr><div class="muted">Próximo garçom</div><div class="turn" id="turn">Defina a sequência</div><p>Abertas: <b id="openct">0</b> | Finalizadas: <b id="donect">0</b> | Taxas pagas: <b id="paidct">0</b></p></div>
+<div class="panel"><h2>Abrir atendimento</h2><label>Número da mesa</label><input id="tableno" placeholder="Ex.: 12"><button onclick="addTable()">Abrir mesa / atendimento</button><p class="muted">Cada abertura cria um atendimento independente.</p></div>
+<div id="adminpanel" class="panel hidden"><h2>Administração</h2><label>Garçons na ordem do rodízio (separados por vírgula)</label><input id="names" placeholder="Railson, Paula, Herick, Elói"><label>Índice inicial</label><input id="startindex" type="number" min="0" value="0"><button onclick="saveSequence()">Salvar sequência</button><hr><label>UID do usuário a autorizar</label><input id="memberuid"><label>E-mail</label><input id="memberemail" type="email"><label>Perfil</label><select id="newrole"><option value="waiter">Garçom</option><option value="manager">Gerente</option><option value="admin">Administrador</option></select><button onclick="addMember()">Autorizar usuário</button><p class="muted">Copie o UID em Firebase → Authentication → Users.</p><button class="danger" onclick="closeNight()">Encerrar noite e limpar atendimentos</button></div>
+<div class="panel"><h2>Atendimentos em aberto</h2><div id="openlist" class="cards"></div></div><div class="panel"><h2>Atendimentos finalizados</h2><div id="donelist" class="cards"></div></div></div></div>
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getDatabase,ref,onValue,set,update,push,remove} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-const cfg={apiKey:"AIzaSyCIVBLszTdPSg-FZxT8ynJQRebRrjLl6lc",authDomain:"holanda-garcom.firebaseapp.com",databaseURL:"https://holanda-garcom-default-rtdb.firebaseio.com",projectId:"holanda-garcom",storageBucket:"holanda-garcom.firebasestorage.app",messagingSenderId:"118990362111",appId:"1:118990362111:web:f16bcf4d3214971a1743ca"};
-const app=initializeApp(cfg),auth=getAuth(app),db=getDatabase(app);
-let me=null,role="",memberOk=false,state={},seq=[],turnIndex=0,unsubs=[];
-const $=id=>document.getElementById(id),msg=t=>$("authmsg").textContent=t;
-window.login=()=>signInWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value).catch(e=>msg(e.message));
-window.signup=()=>createUserWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value).then(()=>msg("Conta criada. Solicite ao administrador a autorização pelo UID.")).catch(e=>msg(e.message));
-window.logout=()=>signOut(auth);
-function stopListeners(){unsubs.forEach(f=>f());unsubs=[]}
-onAuthStateChanged(auth,u=>{
- stopListeners();me=u;role="";memberOk=false;
- $("login").classList.toggle("hidden",!!u);$("app").classList.toggle("hidden",!u);
- if(!u)return;
- $("userlabel").textContent=u.email||u.uid;
- const memberRef=ref(db,"members/"+u.uid);
- const unsubMember=onValue(memberRef,s=>{
-   const m=s.val();role=String(m?.role||"").toLowerCase();memberOk=["admin","manager","waiter"].includes(role);
-   $("rolelabel").textContent=memberOk?"Perfil: "+role:"Acesso ainda não autorizado. Admin deve cadastrar seu UID.";
-   $("adminpanel").classList.toggle("hidden",role!=="admin");
-   $("app").classList.toggle("hidden",!memberOk);$("login").classList.toggle("hidden",memberOk);
-   if(!memberOk)msg("Conta autenticada, mas sem autorização. UID: "+u.uid);
- },e=>msg("Erro ao consultar perfil: "+e.message));
- unsubs.push(unsubMember);
- unsubs.push(onValue(ref(db,"salon"),s=>{state=s.val()||{};render()},e=>alert("Erro ao ler atendimentos: "+e.message)));
- unsubs.push(onValue(ref(db,"sequence"),s=>{let v=s.val()||{};seq=Array.isArray(v.names)?v.names:[];turnIndex=Number(v.index)||0;renderTurn()},e=>alert("Erro na sequência: "+e.message)));
-});
-function authorized(){return !!me&&memberOk}
-function renderTurn(){let current=seq.length?seq[((turnIndex%seq.length)+seq.length)%seq.length]:"Defina a sequência";$("turn").textContent=current}
-window.saveSequence=async()=>{if(role!=="admin")return alert("Somente administrador.");let names=$("names").value.split(",").map(x=>x.trim()).filter(Boolean);if(!names.length)return alert("Informe os garçons.");let index=Math.max(0,Number($("startindex").value)||0)%names.length;await set(ref(db,"sequence"),{names,index});alert("Sequência salva.")};
-window.addMember=async()=>{if(role!=="admin")return alert("Somente administrador.");let uid=$("memberuid").value.trim(),email=$("memberemail").value.trim().toLowerCase(),r=$("newrole").value;if(!uid||!email)return alert("Informe UID e e-mail.");await set(ref(db,"members/"+uid),{email,role:r});alert("Usuário autorizado.")};
-window.addTable=async()=>{if(!authorized())return alert("Acesso não autorizado.");let n=$("tableno").value.trim();if(!n)return alert("Informe a mesa.");if(!seq.length)return alert("Admin precisa salvar a sequência.");let idx=((turnIndex%seq.length)+seq.length)%seq.length,g=seq[idx],id=push(ref(db,"salon")).key;
-await set(ref(db,"salon/"+id),{id,n,g,status:"aguardando",taxPaid:false,createdAt:Date.now(),createdBy:me.email||me.uid});
-await update(ref(db,"sequence"),{index:(idx+1)%seq.length});$("tableno").value=""};
-window.change=async(id,status)=>{if(!authorized())return;await update(ref(db,"salon/"+id),{status,updatedAt:Date.now(),updatedBy:me.email||me.uid})};
-window.toggleTax=async(id,v)=>{if(!authorized())return;await update(ref(db,"salon/"+id),{taxPaid:!v,updatedAt:Date.now(),updatedBy:me.email||me.uid})};
-window.closeNight=async()=>{if(role!=="admin")return alert("Somente administrador.");if(!confirm("Encerrar a noite e apagar todos os atendimentos para todos?"))return;await remove(ref(db,"salon"));await update(ref(db,"sequence"),{index:0});alert("Noite encerrada.")};
-function render(){let arr=Object.values(state||{}),open=arr.filter(x=>x.status!=="finalizada"),done=arr.filter(x=>x.status==="finalizada");$("openct").textContent=open.length;$("donect").textContent=done.length;$("paidct").textContent=arr.filter(x=>x.taxPaid).length;
-let card=m=>`<div class="mesa ${m.status}"><b>Mesa ${escapeHtml(m.n)} • ${escapeHtml(m.g)}</b><p class="muted">${m.status==="aguardando"?"Pedido não feito":m.status==="andamento"?"Em andamento":"Finalizada"} • Taxa ${m.taxPaid?"paga":"não paga"}</p><p class="muted">Criada por ${escapeHtml(m.createdBy||"—")}</p><div class="actions">${m.status!=="finalizada"?`<button style="background:#b91c1c" onclick="change('${m.id}','aguardando')">Pedido não feito</button><button style="background:#2563eb" onclick="change('${m.id}','andamento')">Em andamento</button><button style="background:#15803d" onclick="change('${m.id}','finalizada')">Finalizar</button>`:""}<button class="secondary wide" onclick="toggleTax('${m.id}',${!!m.taxPaid})">${m.taxPaid?"Desmarcar taxa":"Marcar taxa paga"}</button></div></div>`;
-$("openlist").innerHTML=open.map(card).join("")||'<p class="muted">Nenhum atendimento aberto.</p>';$("donelist").innerHTML=done.map(card).join("")||'<p class="muted">Nenhum atendimento finalizado.</p>';renderTurn()}
-function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";import{getDatabase,ref,onValue,set,update,push,remove}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const cfg={apiKey:"AIzaSyCIVBLszTdPSg-FZxT8ynJQRebRrjLl6lc",authDomain:"holanda-garcom.firebaseapp.com",databaseURL:"https://holanda-garcom-default-rtdb.firebaseio.com",projectId:"holanda-garcom",storageBucket:"holanda-garcom.firebasestorage.app",messagingSenderId:"118990362111",appId:"1:118990362111:web:f16bcf4d3214971a1743ca"};const app=initializeApp(cfg),auth=getAuth(app),db=getDatabase(app);let me=null,role="",memberOk=false,state={},seq=[],turnIndex=0,unsubs=[];const $=id=>document.getElementById(id),msg=t=>$("authmsg").textContent=t;
+window.login=()=>signInWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value).catch(e=>msg("Firebase: "+e.code));window.signup=()=>createUserWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value).then(()=>msg("Conta criada. Peça autorização ao administrador.")).catch(e=>msg("Firebase: "+e.code));window.logout=()=>signOut(auth);
+function stop(){unsubs.forEach(f=>f());unsubs=[]}
+onAuthStateChanged(auth,u=>{stop();me=u;role="";memberOk=false;$("login").classList.toggle("hidden",!!u);$("app").classList.add("hidden");if(!u)return;$("userlabel").textContent=u.email||u.uid;
+unsubs.push(onValue(ref(db,"members/"+u.uid),s=>{let m=s.val();const isOwner=(u.email||"").toLowerCase()==="railsonborges1263@gmail.com";role=String(m?.role||(isOwner?"admin":"")).toLowerCase();memberOk=["admin","manager","waiter"].includes(role);$("rolelabel").textContent=memberOk?"Perfil: "+role:"Sem autorização. UID: "+u.uid;$("adminpanel").classList.toggle("hidden",role!=="admin");$("app").classList.toggle("hidden",!memberOk);$("login").classList.toggle("hidden",memberOk);if(!memberOk)msg("Conta autenticada, sem perfil. UID: "+u.uid)},e=>msg("Erro perfil: "+e.code)));
+unsubs.push(onValue(ref(db,"salon"),s=>{state=s.val()||{};render()},e=>alert("Erro salon: "+e.code)));unsubs.push(onValue(ref(db,"sequence"),s=>{let v=s.val()||{};seq=Array.isArray(v.names)?v.names:[];turnIndex=Number(v.index)||0;renderTurn()},e=>alert("Erro sequence: "+e.code)))});
+function ok(){return !!me&&memberOk}function renderTurn(){$("turn").textContent=seq.length?seq[((turnIndex%seq.length)+seq.length)%seq.length]:"Defina a sequência"}
+window.saveSequence=async()=>{if(role!=="admin")return alert("Somente admin");let names=$("names").value.split(",").map(x=>x.trim()).filter(Boolean);if(!names.length)return alert("Informe garçons");let index=(Number($("startindex").value)||0)%names.length;await set(ref(db,"sequence"),{names,index});alert("Sequência salva")};
+window.addMember=async()=>{if(role!=="admin")return alert("Somente admin");let uid=$("memberuid").value.trim(),email=$("memberemail").value.trim().toLowerCase(),r=$("newrole").value;if(!uid||!email)return alert("Informe UID e email");await set(ref(db,"members/"+uid),{email,role:r});alert("Usuário autorizado")};
+window.addTable=async()=>{if(!ok())return alert("Sem autorização");let n=$("tableno").value.trim();if(!n)return alert("Informe mesa");if(!seq.length)return alert("Admin precisa salvar sequência");let i=((turnIndex%seq.length)+seq.length)%seq.length,g=seq[i],id=push(ref(db,"salon")).key;await set(ref(db,"salon/"+id),{id,n,g,status:"aguardando",taxPaid:false,createdAt:Date.now(),createdBy:me.email||me.uid});await update(ref(db,"sequence"),{index:(i+1)%seq.length});$("tableno").value=""};
+window.change=async(id,status)=>{if(ok())await update(ref(db,"salon/"+id),{status,updatedAt:Date.now(),updatedBy:me.email})};window.toggleTax=async(id,v)=>{if(ok())await update(ref(db,"salon/"+id),{taxPaid:!v,updatedAt:Date.now(),updatedBy:me.email})};window.closeNight=async()=>{if(role!=="admin")return;if(confirm("Apagar todos atendimentos e reiniciar sequência?")){await remove(ref(db,"salon"));await update(ref(db,"sequence"),{index:0});alert("Noite encerrada")}};
+function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){let a=Object.values(state),o=a.filter(x=>x.status!=="finalizada"),d=a.filter(x=>x.status==="finalizada");$("openct").textContent=o.length;$("donect").textContent=d.length;$("paidct").textContent=a.filter(x=>x.taxPaid).length;let card=m=>`<div class="mesa ${m.status}"><b>Mesa ${esc(m.n)} • ${esc(m.g)}</b><p class="muted">${m.status==="aguardando"?"Pedido não feito":m.status==="andamento"?"Em andamento":"Finalizada"} • Taxa ${m.taxPaid?"paga":"não paga"}</p><p class="muted">Criada por ${esc(m.createdBy||"—")}</p><div class="actions">${m.status!=="finalizada"?`<button style="background:#b91c1c" onclick="change('${m.id}','aguardando')">Pedido não feito</button><button style="background:#2563eb" onclick="change('${m.id}','andamento')">Em andamento</button><button style="background:#15803d" onclick="change('${m.id}','finalizada')">Finalizar</button>`:""}<button class="secondary wide" onclick="toggleTax('${m.id}',${!!m.taxPaid})">${m.taxPaid?"Desmarcar taxa":"Marcar taxa paga"}</button></div></div>`;$("openlist").innerHTML=o.map(card).join("")||'<p class="muted">Nenhuma mesa aberta</p>';$("donelist").innerHTML=d.map(card).join("")||'<p class="muted">Nenhuma mesa finalizada</p>';renderTurn()}
 </script></body></html>
