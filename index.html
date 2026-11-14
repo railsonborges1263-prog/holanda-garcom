@@ -1,5 +1,25 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Holanda Garçom Online</title><style>
-:root{--bg:#0b1220;--p:#121c2e;--line:#26364f;--t:#eaf1ff;--m:#9fb0ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:16px system-ui;padding:16px}.wrap{max-width:900px;margin:auto}.panel{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}h1,h2{margin:8px 0 14px}input,select,button{font:inherit;border-radius:9px;padding:11px;border:1px solid var(--line);background:#0b1424;color:var(--t);width:100%;margin:5px 0}button{background:#2457a6;border:0;font-weight:650}button.secondary{background:#334155}button.danger{background:#991b1b}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.hidden{display:none!important}.muted{color:var(--m);font-size:14px}.turn{font-size:24px;font-weight:800;color:#fbbf24}.pill{background:#0b1424;border:1px solid var(--line);padding:8px 12px;border-radius:99px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.mesa{border:2px solid var(--line);border-radius:12px;padding:12px;background:#0b1424}.mesa.aguardando{border-color:#ef4444}.mesa.andamento{border-color:#3b82f6}.mesa.finalizada{border-color:#16a34a}.actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}.actions button{font-size:14px;padding:9px}.wide{grid-column:1/-1}label{display:block;color:var(--m);font-size:14px;margin-top:8px}</style></head><body><div class="wrap"><h1>🍕 Holanda Garçom Online</h1>
+:root{--bg:#0b1220;--p:#121c2e;--line:#26364f;--t:#eaf1ff;--m:#9fb0ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:16px system-ui;padding:16px}.wrap{max-width:900px;margin:auto}.panel{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}h1,h2{margin:8px 0 14px}input,select,button{font:inherit;border-radius:9px;padding:11px;border:1px solid var(--line);background:#0b1424;color:var(--t);width:100%;margin:5px 0}button{background:#2457a6;border:0;font-weight:650}button.secondary{background:#334155}button.danger{background:#991b1b}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.hidden{display:none!important}.muted{color:var(--m);font-size:14px}.turn{font-size:24px;font-weight:800;color:#fbbf24}.pill{background:#0b1424;border:1px solid var(--line);padding:8px 12px;border-radius:99px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.mesa{border:2px solid var(--line);border-radius:12px;padding:12px;background:#0b1424}.mesa.aguardando{border-color:#ef4444}.mesa.andamento{border-color:#3b82f6}.mesa.finalizada{border-color:#16a34a}.actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}.actions button{font-size:14px;padding:9px}.wide{grid-column:1/-1}label{display:block;color:var(--m);font-size:14px;margin-top:8px}
+:root{--bg:#07111f;--p:#101d30;--line:#263b58;--t:#f4f7fb;--m:#a9bbd3}
+body{padding:10px;font-size:16px;background:linear-gradient(160deg,#07111f,#0b1728 55%,#101d30)}
+h1{font-size:clamp(22px,5vw,32px);letter-spacing:-.5px}
+.panel{padding:14px;border-radius:16px;box-shadow:0 5px 18px #0002}
+#app>.panel:first-child{position:sticky;top:6px;z-index:5;backdrop-filter:blur(12px);box-shadow:0 8px 25px #0005}
+#statslist{grid-template-columns:repeat(auto-fit,minmax(135px,1fr)}
+#statslist .mesa{text-align:center;padding:14px 8px;background:linear-gradient(145deg,#14243b,#0b1424)}
+#statslist .mesa b{font-size:14px;display:block}
+#statslist .mesa .turn{font-size:30px;margin:6px 0 0;color:#7dd3fc}
+#openlist,#donelist{grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.mesa{border-radius:14px;padding:14px}
+.actions button{min-height:44px;font-size:14px}
+button,input,select{min-height:46px}
+button{cursor:pointer;transition:transform .08s,filter .15s}
+button:active{transform:scale(.98);filter:brightness(1.15)}
+.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.filterbar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#searchtable{grid-column:1/-1}
+@media(max-width:480px){body{padding:7px}.panel{padding:11px;margin:9px 0}.row{grid-template-columns:1fr 1fr}.actions{gap:6px}.actions button{padding:10px 5px;font-size:13px}.turn{font-size:22px}}
+</style></head><body><div class="wrap"><h1>🍕 Holanda Garçom Online</h1>
 <div id="login" class="panel"><h2>Entrar</h2><label>E-mail</label><input id="email" type="email"><label>Senha</label><input id="pass" type="password"><div class="row"><button onclick="login()">Entrar</button><button class="secondary" onclick="signup()">Criar conta</button></div><p id="authmsg" class="muted"></p></div>
 <div id="app" class="hidden"><div class="panel"><div class="row"><div><b>Usuário:</b> <span id="userlabel"></span><p id="rolelabel" class="muted"></p></div><button class="secondary" onclick="logout()">Sair</button></div><hr><div class="muted">Próximo garçom</div><div class="turn" id="turn">Defina a sequência</div><p>Abertas: <b id="openct">0</b> | Finalizadas: <b id="donect">0</b> | Taxas pagas: <b id="paidct">0</b></p></div>
 <div class="panel"><h2>📊 Mesas por garçom — hoje</h2>
@@ -9,7 +29,8 @@
 <div class="panel"><h2>Abrir atendimento</h2><label>Número da mesa</label><input id="tableno" placeholder="Ex.: 12"><button onclick="addTable()">Abrir mesa / atendimento</button><p class="muted">Cada abertura cria um atendimento independente.</p></div>
 <div id="adminpanel" class="panel hidden"><h2>Administração</h2><label>Garçons na ordem do rodízio (separados por vírgula)</label><input id="names" placeholder="Railson, Paula, Herick, Elói"><label>Índice inicial</label><input id="startindex" type="number" min="0" value="0"><button onclick="saveSequence()">Salvar sequência</button><p id="seqmsg" class="muted"></p><hr><label>UID do usuário a autorizar</label><input id="memberuid"><label>E-mail</label><input id="memberemail" type="email"><label>Perfil</label><select id="newrole"><option value="waiter">Garçom</option><option value="manager">Gerente</option><option value="admin">Administrador</option></select><button onclick="addMember()">Autorizar usuário</button><p id="membermsg" class="muted"></p><p class="muted">Copie o UID em Firebase → Authentication → Users.</p><button class="danger" onclick="closeNight()">Encerrar noite e limpar atendimentos</button></div>
 
-<div class="panel"><h2>Atendimentos em aberto</h2><div id="openlist" class="cards"></div></div><div class="panel"><h2>Atendimentos finalizados</h2><div id="donelist" class="cards"></div></div></div></div>
+<div class="panel"><h2>🔎 Encontrar atendimento</h2><div class="filterbar"><input id="searchtable" placeholder="Buscar mesa ou garçom..." oninput="render()"><select id="filterstatus" onchange="render()"><option value="all">Todas as abertas</option><option value="aguardando">Pedido não feito</option><option value="andamento">Em andamento</option></select></div></div>
+<div class="panel"><h2>🟠 Atendimentos em aberto <span id="openlabel"></span></h2><div id="openlist" class="cards"></div></div><div class="panel"><h2>🟢 Finalizados <span id="donelabel"></span></h2><div id="donelist" class="cards"></div></div></div></div>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";import{getDatabase,ref,onValue,set,update,push,remove}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const cfg={apiKey:"AIzaSyCIVBLszTdPSg-FZxT8ynJQRebRrjLl6lc",authDomain:"holanda-garcom.firebaseapp.com",databaseURL:"https://holanda-garcom-default-rtdb.firebaseio.com",projectId:"holanda-garcom",storageBucket:"holanda-garcom.firebasestorage.app",messagingSenderId:"118990362111",appId:"1:118990362111:web:f16bcf4d3214971a1743ca"};const app=initializeApp(cfg),auth=getAuth(app),db=getDatabase(app);let me=null,role="",memberOk=false,state={},seq=[],turnIndex=0,unsubs=[];const $=id=>document.getElementById(id),msg=t=>$("authmsg").textContent=t;
@@ -26,6 +47,9 @@ window.change=async(id,status)=>{try{if(!ok())return alert("Sem autorização");
 function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function render(){
 let a=Object.values(state||{}),o=a.filter(x=>x.status!=="finalizada"),d=a.filter(x=>x.status==="finalizada");
+let term=($("searchtable")?.value||"").trim().toLowerCase(),filter=$("filterstatus")?.value||"all";
+let visible=o.filter(x=>(filter==="all"||x.status===filter)&&(!term||String(x.n).toLowerCase().includes(term)||String(x.g).toLowerCase().includes(term)));
+if($("openlabel"))$("openlabel").textContent="("+visible.length+")";if($("donelabel"))$("donelabel").textContent="("+d.length+")";
 $("openct").textContent=o.length;$("donect").textContent=d.length;$("paidct").textContent=a.filter(x=>x.taxPaid).length;
 let counts={};a.forEach(x=>{let name=x.g||"Sem garçom";counts[name]=(counts[name]||0)+1});
 let ranking=Object.entries(counts).sort((x,y)=>y[1]-x[1]);
