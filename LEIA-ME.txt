@@ -1,0 +1,21 @@
+HOLANDA GARÇOM — PROJETO PARA GERAR APK ANDROID
+
+Este pacote contém o projeto Android e o fluxo automático de compilação pelo GitHub Actions.
+O aplicativo abre a versão HTTPS publicada em:
+https://railsonborges1263-prog.github.io/holanda-garcom/teste.html
+
+IMPORTANTE:
+1. Confirme que a versão atualizada está publicada nesse endereço antes de compilar.
+2. O APK precisa ser compilado pelo GitHub Actions; este ambiente não possui Android SDK/Gradle para gerar o binário.
+3. O APK Debug gerado é para instalação/teste. Para distribuir amplamente, será necessária uma versão Release assinada.
+
+PASSOS:
+1. Extraia este ZIP.
+2. Envie todos os arquivos e pastas para a raiz do repositório GitHub holanda-garcom (substituindo/mesclando os arquivos do projeto, sem apagar seus arquivos do site).
+3. No GitHub, abra Actions > Gerar APK Holanda Garçom.
+4. Clique em Run workflow e aguarde ficar verde.
+5. Abra a execução concluída, baixe o artefato Holanda-Garcom-APK e extraia app-debug.apk.
+6. Envie app-debug.apk ao Android e instale. Talvez seja necessário permitir instalação desta fonte.
+
+Se teste.html não for o endereço publicado da versão aprovada, altere APP_URL em
+app/src/main/java/com/holanda/garcom/MainActivity.java antes de compilar.
