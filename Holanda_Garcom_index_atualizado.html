@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081426">
+<title>Holanda Garçom Online</title>
+<style>
+:root{--bg:#070d18;--p:#0e1a2b;--line:#26364b;--t:#edf4ff;--m:#a5b4c9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:16px system-ui;padding:12px 12px 90px}
+.wrap{max-width:950px;margin:auto}.panel{background:var(--p);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0}
+h1{font-size:22px}h2{font-size:21px;margin:5px 0 15px}h3{font-size:17px}.muted,small{color:var(--m)}
+button,input,select{font:inherit;border-radius:12px;padding:12px;border:1px solid var(--line);background:#091426;color:var(--t);width:100%;margin:5px 0}
+button{background:#2457a6;border:0;font-weight:700;min-height:44px;cursor:pointer}button.secondary{background:#334155}button.danger{background:#9f2934}
+.hidden{display:none!important}.row,.stats,.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:10px 0}.field label{display:block;color:var(--m);font-size:14px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:8px}.dots{width:44px;background:transparent;border:1px solid var(--line);font-size:22px}
+.waiter{border:1px solid var(--line);border-radius:18px;padding:13px;margin:12px 0;background:#0a1627}
+.waiterhead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:18px;font-weight:800}
+.count{background:#29394e;border-radius:99px;padding:7px 11px;font-size:13px;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chip{width:auto;border-radius:99px;padding:9px 14px;margin:0}
+.open{background:#103b34;color:#35d69a}.running{background:#483714;color:#ffd05c}.expired{background:#4b2029;color:#ff7881}.finished{background:#12365d;color:#75baff}
+.stat{border-radius:18px;padding:14px;text-align:center;background:#142c43}.stat.done{background:#103529}.stat b{display:block;font-size:32px}
+.listbox{border:1px solid var(--line);border-radius:16px;padding:10px;background:#0a1627;min-width:0}.mini{border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;background:#101f33}.mini small{display:block}
+.bottom{position:fixed;z-index:5;bottom:0;left:0;right:0;background:#081426f2;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:8px 12px}
+.bottom button{background:transparent;color:var(--m);margin:0}.bottom button.active{color:#70baff}.bottom span{display:block;font-size:13px}
+.modal{position:fixed;inset:0;background:#000b;z-index:10;display:flex;align-items:center;justify-content:center;padding:14px}
+.modalbox{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--p);border:1px solid var(--line);border-radius:20px;padding:17px}
+.timer{text-align:center;font-size:30px;font-weight:900;color:#f5c24d;margin:12px}.timer.expired{color:#ff6673}
+.notice{padding:12px;border-radius:12px;background:#15283e;color:var(--m);font-size:13px}
+details{border:1px solid var(--line);border-radius:14px;padding:10px;margin-top:12px;background:#0a1627}summary{cursor:pointer;font-weight:800}
+@media(max-width:520px){.two{grid-template-columns:1fr}.waiterhead{font-size:16px}}
+</style>
+</head>
+<body><div class="wrap">
+<h1>🍕 Holanda Garçom Online</h1>
+<div id="login" class="panel"><h2>Entrar</h2><label>E-mail</label><input id="email" type="email" autocomplete="username"><label>Senha</label><input id="pass" type="password" autocomplete="current-password"><div class="row"><button onclick="login()">Entrar</button><button class="secondary" onclick="signup()">Criar conta</button></div><p id="authmsg" class="muted"></p></div>
+<div id="app" class="hidden">
+<section id="page-home">
+<div class="panel"><div class="head"><b>🍕 Holanda Garçom Online</b><button class="dots" onclick="toggleUser()">⋯</button></div>
+<div class="head"><div><small>Usuário</small><div id="userlabel"></div></div><span id="rolelabel" class="muted"></span></div>
+<div id="userextra" class="hidden"><button class="secondary" onclick="logout()">Sair</button></div><hr style="border-color:var(--line)">
+<h2>📊 Mesas por garçom</h2><div id="statslist"></div>
+<div class="stats"><div class="stat"><span>Em aberto</span><b id="openct">0</b>Mesas abertas</div><div class="stat done"><span>Finalizadas</span><b id="donect">0</b>Mesas encerradas</div></div>
+</div>
+<div class="panel"><h2>Novo atendimento</h2>
+<div class="field"><label>Salão</label><select id="kind" onchange="kindChanged()"><option value="interno">Interno</option><option value="externo">Externo</option></select></div>
+<div class="field"><label>Garçom deste salão</label><select id="waiter"></select></div>
+<div class="field"><label>Número da mesa</label><input id="tableno" placeholder="Ex.: 12"></div>
+<button onclick="addTable()">＋ Abrir mesa</button>
+<p class="notice">A lista de garçons disponível depende do salão selecionado. Cada mesa aparece abaixo do nome do garçom responsável.</p>
+</div></section>
+<section id="page-tables" class="hidden"><div class="panel"><h2>Mesas e atendimentos</h2><div class="two"><div class="listbox"><h3>Em aberto</h3><div id="openlist"></div></div><div class="listbox"><h3>Finalizadas</h3><details><summary>Mostrar mesas finalizadas</summary><div id="donelist"></div></details></div></div></div></section>
+<section id="page-admin" class="hidden"><div class="panel"><h2>Administração</h2>
+<p class="notice">Cadastre os garçons de cada salão separadamente. Use vírgulas para separar os nomes. A configuração será compartilhada entre os celulares.</p>
+<div class="field"><label>Garçons do salão interno</label><input id="internalnames" placeholder="Paula, Railson, Elói"></div>
+<div class="field"><label>Garçons do salão externo</label><input id="externalnames" placeholder="Herick, Erick"></div>
+<div class="field"><label>Sequência do salão interno (opcional, nomes separados por vírgula)</label><input id="names" placeholder="Paula, Railson, Elói, Herick"></div>
+<div class="field"><label>Índice inicial da sequência</label><input id="startindex" type="number" value="0"></div>
+<button onclick="saveSetup()">Salvar garçons e sequência</button>
+<hr><h3>Autorizar usuário</h3><label>UID</label><input id="memberuid"><label>E-mail</label><input id="memberemail" type="email"><label>Perfil</label><select id="newrole"><option value="waiter">Garçom</option><option value="manager">Gerente</option><option value="admin">Administrador</option></select><button onclick="addMember()">Autorizar usuário</button>
+<p class="notice">Somente administrador pode excluir mesas e encerrar a noite. As regras do Firebase também precisam bloquear exclusões feitas por outros usuários.</p>
+<button class="danger" onclick="closeNight()">Arquivar atendimentos e encerrar noite</button>
+</div></section>
+</div></div>
+<nav id="bottom" class="bottom hidden"><button id="nav-home" class="active" onclick="showPage('home')">⌂<span>Início</span></button><button id="nav-tables" onclick="showPage('tables')">▦<span>Mesas</span></button><button id="nav-admin" onclick="showPage('admin')">⚙<span>Admin</span></button></nav>
+<div id="tablemodal" class="modal hidden"><div class="modalbox"><div class="head"><h2 id="modal-title">Mesa</h2><button class="dots" onclick="closeModal()">×</button></div><div id="modal-content"></div></div></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getDatabase,ref,onValue,set,update,push,remove}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const cfg={apiKey:"AIzaSyCIVBLszTdPSg-FZxT8ynJQRebRrjLl6lc",authDomain:"holanda-garcom.firebaseapp.com",databaseURL:"https://holanda-garcom-default-rtdb.firebaseio.com",projectId:"holanda-garcom",storageBucket:"holanda-garcom.firebasestorage.app",messagingSenderId:"118990362111",appId:"1:118990362111:web:f16bcf4d3214971a1743ca"};
+const fb=initializeApp(cfg),auth=getAuth(fb),db=getDatabase(fb);
+let me=null,role="",memberOk=false,state={},seq=[],turnIndex=0,assignments={interno:[],externo:[]},history={},unsubs=[],currentId=null;
+const $=id=>document.getElementById(id),msg=t=>$("authmsg").textContent=t;
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const namesFrom=s=>[...new Set(String(s||"").split(",").map(x=>x.trim()).filter(Boolean))];
+window.login=async()=>{try{msg("");await signInWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value)}catch(e){msg("Falha no login: "+e.code)}};
+window.signup=async()=>{try{msg("");await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value);msg("Conta criada. Peça autorização ao administrador.")}catch(e){msg("Falha: "+e.code)}};
+window.logout=()=>signOut(auth);
+function stop(){unsubs.forEach(f=>f());unsubs=[]}
+function isAdmin(){return role==="admin"}function allowed(){return !!me&&memberOk}
+function currentList(){return assignments[$("kind").value]||[]}
+function fillWaiters(){let list=currentList();$("waiter").innerHTML=list.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("")||'<option value="">Cadastre garçons deste salão no Admin</option>'}
+window.kindChanged=()=>fillWaiters();
+onAuthStateChanged(auth,u=>{
+ stop();me=u;role="";memberOk=false;$("login").classList.toggle("hidden",!!u);$("app").classList.add("hidden");$("bottom").classList.add("hidden");if(!u)return;
+ $("userlabel").textContent=u.email||u.uid;
+ const owner=(u.email||"").toLowerCase()==="railsonborges1263@gmail.com";
+ unsubs.push(onValue(ref(db,"members/"+u.uid),s=>{
+  let m=s.val();role=String(m?.role||(owner?"admin":"")).toLowerCase();memberOk=["admin","manager","waiter"].includes(role);
+  $("rolelabel").textContent="Perfil: "+(role||"sem autorização");$("app").classList.toggle("hidden",!memberOk);$("bottom").classList.toggle("hidden",!memberOk);$("login").classList.toggle("hidden",memberOk);
+  if(!memberOk)msg("Conta sem autorização. UID: "+u.uid);render();
+ },e=>msg("Erro ao consultar perfil: "+e.code)));
+ unsubs.push(onValue(ref(db,"salon"),s=>{state=s.val()||{};render()},e=>msg("Erro ao carregar mesas: "+e.code)));
+ unsubs.push(onValue(ref(db,"sequence"),s=>{let v=s.val()||{};seq=Array.isArray(v.names)?v.names:[];turnIndex=Number(v.index)||0;render()},e=>msg("Erro sequência: "+e.code)));
+ unsubs.push(onValue(ref(db,"settings/assignments"),s=>{let v=s.val()||{};assignments={interno:Array.isArray(v.interno)?v.interno:[],externo:Array.isArray(v.externo)?v.externo:[]};fillWaiters();render();if(isAdmin())populateAdmin()},e=>msg("Erro configuração: "+e.code)));
+ unsubs.push(onValue(ref(db,"history"),s=>{history=s.val()||{}},e=>msg("Erro histórico: "+e.code)));
+});
+window.toggleUser=()=>$("userextra").classList.toggle("hidden");
+window.showPage=p=>{["home","tables","admin"].forEach(x=>$("page-"+x).classList.toggle("hidden",x!==p));["home","tables","admin"].forEach(x=>$("nav-"+x).classList.toggle("active",x===p));if(p==="admin"&&!isAdmin()){alert("Acesso exclusivo do administrador.");$("page-admin").classList.add("hidden")};if(p==="admin")populateAdmin()};
+function populateAdmin(){$("internalnames").value=assignments.interno.join(", ");$("externalnames").value=assignments.externo.join(", ");$("names").value=seq.join(", ");$("startindex").value=turnIndex}
+window.saveSetup=async()=>{if(!isAdmin())return alert("Somente administrador.");let inside=namesFrom($("internalnames").value),outside=namesFrom($("externalnames").value),sequence=namesFrom($("names").value);if(!inside.length&&!outside.length)return alert("Cadastre pelo menos um garçom.");try{await set(ref(db,"settings/assignments"),{interno:inside,externo:outside});await set(ref(db,"sequence"),{names:sequence,index:sequence.length?(Number($("startindex").value)||0)%sequence.length:0});assignments={interno:inside,externo:outside};seq=sequence;fillWaiters();alert("Garçons dos salões e sequência salvos.")}catch(e){alert("Não foi possível salvar: "+e.code)}};
+window.addMember=async()=>{if(!isAdmin())return alert("Somente administrador.");let uid=$("memberuid").value.trim(),email=$("memberemail").value.trim().toLowerCase();if(!uid||!email)return alert("Informe UID e e-mail.");try{await set(ref(db,"members/"+uid),{email,role:$("newrole").value});alert("Usuário autorizado.")}catch(e){alert("Erro: "+e.code)}};
+window.addTable=async()=>{
+ if(!allowed())return alert("Sem autorização.");let n=$("tableno").value.trim(),g=$("waiter").value,k=$("kind").value;
+ if(!n||!g)return alert("Selecione o garçom e informe o número da mesa.");
+ if(k==="interno"&&!seq.length)return alert("Cadastre a sequência do salão interno ou informe uma sequência no Admin.");
+ if(Object.values(state).some(x=>x&&String(x.n)===n&&x.status!=="finalizada")&&!confirm("Já existe uma mesa com esse número aberta. Deseja lançar outra?"))return;
+ let now=Date.now(),id=push(ref(db,"salon")).key;
+ let record={id,n,g,kind:k,status:"aguardando",taxPaid:false,createdAt:now,openedAt:now,timerStartedAt:now,createdBy:me.email||me.uid,durationMs:2400000};
+ try{await set(ref(db,"salon/"+id),record);await set(ref(db,"history/"+id),{...record,events:{opened:{at:now,by:me.email||me.uid}}});
+  if(k==="interno"&&seq.length){let i=seq.indexOf(g);if(i<0)i=turnIndex;await update(ref(db,"sequence"),{index:(i+1)%seq.length})}
+  $("tableno").value="";alert("Mesa aberta.")
+ }catch(e){alert("Erro ao abrir mesa: "+e.code)}
+};
+function elapsed(m){let start=Number(m.timerStartedAt||m.openedAt||m.createdAt||Date.now()),end=m.status==="finalizada"?Number(m.finishedAt||Date.now()):Date.now();return Math.max(0,end-start)}
+function fmt(ms){let s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=s%60;return h?String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(ss).padStart(2,"0"):String(m).padStart(2,"0")+":"+String(ss).padStart(2,"0")}
+function isExpired(m){return m.status!=="finalizada"&&elapsed(m)>=2400000}
+function cssState(m){if(m.status==="finalizada")return"finished";if(isExpired(m))return"expired";if(m.status==="andamento")return"running";return"open"}
+function labelStatus(m){return m.status==="finalizada"?"Finalizada":isExpired(m)?"Mais de 40 min":m.status==="andamento"?"Em andamento":"Aguardando"}
+function render(){
+ if(!memberOk)return;let all=Object.values(state||{}).filter(Boolean),groups={};
+ all.forEach(m=>(groups[m.g||"Sem garçom"]??=[]).push(m));
+ let waiterNames=[...new Set([...assignments.interno,...assignments.externo,...seq,...Object.keys(groups)])];
+ $("statslist").innerHTML=waiterNames.map(n=>{
+  let arr=groups[n]||[],active=arr.filter(m=>m.status!=="finalizada"),done=arr.filter(m=>m.status==="finalizada");
+  return `<div class="waiter"><div class="waiterhead"><span>${esc(n)}</span><span class="count">${active.length} abertas · ${arr.length} total</span></div><div class="chips">${active.map(m=>`<button class="chip ${cssState(m)}" onclick="openTable('${m.id}')">Mesa ${esc(m.n)} · ${fmt(elapsed(m))}</button>`).join("")||'<small>Nenhuma mesa em aberto</small>'}</div>${done.length?`<details><summary>Finalizadas (${done.length})</summary><div class="chips">${done.map(m=>`<button class="chip finished" onclick="openTable('${m.id}')">Mesa ${esc(m.n)}</button>`).join("")}</div></details>`:""}</div>`
+ }).join("");
+ let opened=all.filter(m=>m.status!=="finalizada"),finished=all.filter(m=>m.status==="finalizada");
+ $("openct").textContent=opened.length;$("donect").textContent=finished.length;
+ const mini=m=>`<div class="mini"><b>Mesa ${esc(m.n)} · ${esc(m.g)}</b><small>${m.kind==="externo"?"Externo":"Interno"} · ${labelStatus(m)} · ${fmt(elapsed(m))}</small><button class="secondary" onclick="openTable('${m.id}')">Ver informações</button></div>`;
+ $("openlist").innerHTML=opened.map(mini).join("")||"<small>Nenhuma mesa aberta.</small>";
+ $("donelist").innerHTML=finished.map(mini).join("")||"<small>Nenhuma mesa finalizada.</small>";
+}
+window.openTable=id=>{
+ let m=state[id]||history[id];if(!m)return;currentId=id;
+ $("modal-title").textContent="Mesa "+m.n;
+ let editable=!!state[id];
+ $("modal-content").innerHTML=`<div class="notice">Garçom: <b>${esc(m.g)}</b> · ${m.kind==="externo"?"Externo":"Interno"}<br>Status: <b>${labelStatus(m)}</b><br>Aberta: ${m.openedAt?new Date(m.openedAt).toLocaleString("pt-BR"):"—"}${m.finishedAt?"<br>Finalizada: "+new Date(m.finishedAt).toLocaleString("pt-BR"):""}</div>
+ <div id="timer" class="timer ${cssState(m)==="expired"?"expired":""}">${m.status==="finalizada"?"Finalizada":fmt(elapsed(m))}</div>
+ ${editable?`<label>Editar número da mesa</label><input id="editno" value="${esc(m.n)}"><label>Alterar salão</label><select id="editkind"><option value="interno" ${m.kind==="interno"?"selected":""}>Interno</option><option value="externo" ${m.kind==="externo"?"selected":""}>Externo</option></select><label>Alterar garçom</label><select id="editwaiter">${(assignments[$("kind").value]||[]).concat(assignments.interno,assignments.externo,[m.g]).filter((v,i,a)=>a.indexOf(v)===i).map(n=>`<option value="${esc(n)}" ${n===m.g?"selected":""}>${esc(n)}</option>`).join("")}</select>
+ <label><input id="taxpaid" type="checkbox" style="width:auto" ${m.taxPaid?"checked":""}> Taxa de serviço paga</label>
+ <div class="row"><button class="secondary" onclick="saveEdit()">Salvar edição</button><button onclick="markServed()">Mesa servida</button></div><button style="background:#176b4c" onclick="finishTable()">Finalizar mesa</button>${isAdmin()?'<button class="danger" onclick="deleteTable()">Excluir mesa (admin)</button>':""}`:"<p class='notice'>Registro histórico. Não é possível editar este atendimento arquivado."}`;
+ $("tablemodal").classList.remove("hidden");
+};
+window.closeModal=()=>{$("tablemodal").classList.add("hidden");currentId=null};
+window.saveEdit=async()=>{
+ if(!currentId||!state[currentId])return;let n=$("editno").value.trim(),kind=$("editkind").value,g=$("editwaiter").value;if(!n||!g)return alert("Preencha os campos.");
+ if(!confirm("Confirmar alteração da mesa?"))return;let patch={n,g,kind,taxPaid:$("taxpaid").checked,updatedAt:Date.now()};
+ try{await update(ref(db,"salon/"+currentId),patch);await update(ref(db,"history/"+currentId),patch);closeModal()}catch(e){alert("Erro: "+e.code)}
+};
+window.markServed=async()=>{
+ let m=state[currentId];if(!m||m.status==="finalizada")return alert("Mesa finalizada.");if(m.status==="andamento")return alert("Esta mesa já foi marcada como servida.");
+ if(!confirm("Confirmar que a mesa foi servida?"))return;let now=Date.now(),patch={status:"andamento",servedAt:now};
+ try{await update(ref(db,"salon/"+currentId),patch);await update(ref(db,"history/"+currentId),{...patch,events:{...(history[currentId]?.events||{}),served:{at:now,by:me.email||me.uid}}})}catch(e){alert("Erro: "+e.code)}
+};
+window.finishTable=async()=>{
+ let m=state[currentId];if(!m)return;if(!confirm("Confirma finalizar esta mesa?"))return;let now=Date.now(),patch={status:"finalizada",finishedAt:now};
+ try{await update(ref(db,"salon/"+currentId),patch);await update(ref(db,"history/"+currentId),{...patch,events:{...(history[currentId]?.events||{}),finished:{at:now,by:me.email||me.uid}}});closeModal()}catch(e){alert("Erro: "+e.code)}
+};
+window.deleteTable=async()=>{
+ if(!isAdmin())return alert("Somente administrador.");if(!confirm("Excluir permanentemente esta mesa e seu histórico?"))return;
+ try{await remove(ref(db,"salon/"+currentId));await remove(ref(db,"history/"+currentId));closeModal()}catch(e){alert("Erro: "+e.code)}
+};
+window.closeNight=async()=>{
+ if(!isAdmin())return;if(!confirm("Arquivar todos os atendimentos desta noite e limpar as mesas ativas?"))return;
+ let now=Date.now(),updates={};Object.entries(state).forEach(([id,m])=>{updates[id+"/archived"]=true;updates[id+"/archivedAt"]=now;updates[id+"/nightClosedBy"]=me.email||me.uid});
+ try{if(Object.keys(updates).length)await update(ref(db,"history"),updates);await remove(ref(db,"salon"));if(seq.length)await update(ref(db,"sequence"),{index:0});alert("Noite encerrada. Histórico preservado.")}catch(e){alert("Não foi possível encerrar: "+e.code)}
+};
+setInterval(()=>{
+ if(!memberOk)return;render();
+ if(currentId&&!$("tablemodal").classList.contains("hidden")){let m=state[currentId]||history[currentId],t=$("timer");if(m&&t&&m.status!=="finalizada"){t.textContent=fmt(elapsed(m));t.classList.toggle("expired",isExpired(m))}}
+},1000);
+</script></body></html>
